@@ -38,44 +38,73 @@ const perguntas = [
 
 const Form = () => {
   const [counter, setCounter] = React.useState(0);
-  const [currentSection, setCurrentSection] = React.useState(
-    perguntas[counter].id,
+  const [currentSection, setCurrentSection] = React.useState('p1');
+  const [value, setValue] = React.useState(
+    {
+      p1: '',
+      p2: '',
+      p3: '',
+      p4: ''
+    }
   );
-  const [firstQuestion, setFirstQuestion] = React.useState([]);
-  const [secondQuestion, setSecondQuestion] = React.useState([]);
-  const [thirdQuestion, setThirdQuestion] = React.useState([]);
-  const [fourthQuestion, setFourthQuestion] = React.useState([]);
 
   function handleSubmit(event) {
     event.preventDefault();
   }
 
-  function handleClick() {
-    setCounter((counter) => counter + 1);
-    setCurrentSection(perguntas[counter].id);
+  function handleClick(id) {
+      setCurrentSection(id);
+  }
+
+  function handleChange({target}) {
+    setValue({...value, [target.id]: target.value});
+  }
+
+  function getResult() {
+    let counter = 0;
+    perguntas.map((pergunta) => {
+      if (pergunta.resposta === value[pergunta.id]) counter++;
+    });
+    return 'Você acertou ' + counter + 'perguntas';
   }
 
   return (
-    <form onSubmit={handleSubmit} action="">
-      <h3></h3>
-      {perguntas.map(({ pergunta, options, id }) => (
-        <div
-          className={`section`}
-          style={
-            id === currentSection ? { display: 'block' } : { display: 'none' }
-          }
-          key={id}
-        >
-          <h3>{pergunta}</h3>
-          <div className="options">
-            {options.map((option) => (
-              <Radio key={option} options={option} id={id} />
-            ))}
+    <div>
+      <form onSubmit={handleSubmit} action="">
+        {perguntas.map(({ pergunta, options, id }, index) => (
+          <div
+            className={`section`}
+            style={
+              id === currentSection ? { display: 'block' } : { display: 'none' }
+            }
+            key={id}
+          >
+            <h3>{pergunta}</h3>
+            <div className="options">
+              <Radio
+                options={options}
+                value={value[id]}
+                id={id}
+                onChange={handleChange}
+              />
+            </div>
+            {currentSection === 'p4'
+            ?
+              <button onClick={() => handleClick('end')}>
+                Finalizar Quiz
+              </button>
+            : 
+            <button onClick={() => handleClick(perguntas[++index].id)}>
+              Enviar
+            </button>}
+            
           </div>
-          <button onClick={handleClick}>Enviar</button>
-        </div>
-      ))}
-    </form>
+        ))}
+      </form>
+
+      
+      { currentSection === 'end' && getResult()}
+    </div>
   );
 };
 
