@@ -1,5 +1,5 @@
 import React from 'react';
-import Radio from '../Radio/Radio';
+import Radio from './Radio';
 
 const perguntas = [
   {
@@ -36,56 +36,54 @@ const perguntas = [
   },
 ];
 
-const Form = () => {
-  const [slide, setSlide] = React.useState(0);
-  const [result, setResult] = React.useState(null);
-  const [responses, setResponses] = React.useState({
+const App = () => {
+  const [respostas, setRespostas] = React.useState({
     p1: '',
     p2: '',
     p3: '',
     p4: '',
   });
+  const [slide, setSlide] = React.useState(0);
+  const [resultado, setResultado] = React.useState(null);
+
+  function handleChange({ target }) {
+    setRespostas({ ...respostas, [target.id]: target.value });
+  }
+
+  function resultadoFinal() {
+    const corretas = perguntas.filter(
+      ({ id, resposta }) => respostas[id] === resposta,
+    );
+    setResultado(`Você acertou: ${corretas.length} de ${perguntas.length}`);
+  }
 
   function handleClick() {
     if (slide < perguntas.length - 1) {
       setSlide(slide + 1);
     } else {
       setSlide(slide + 1);
-      finalResult();
+      resultadoFinal();
     }
   }
 
-  function handleChange({ target }) {
-    setResponses({ ...responses, [target.id]: target.value });
-  }
-
-  function finalResult() {
-    const correctAnswers = perguntas.filter(
-      ({ id, response }) => responses[id] === response,
-    );
-    setResult(`Você acertou: ${correctAnswers.length} de ${perguntas.length}`);
-  }
-
   return (
-    <div>
-      <form onSubmit={(event) => event.preventDefault()} action="">
-        {perguntas.map((pergunta, index) => (
-          <Radio
-            active={slide === index}
-            key={pergunta.id}
-            value={responses[pergunta.id]}
-            onChange={handleChange}
-            {...pergunta}
-          />
-        ))}
-        {result ? (
-          <p>{result}</p>
-        ) : (
-          <button onClick={handleClick}>Próxima</button>
-        )}
-      </form>
-    </div>
+    <form onSubmit={(event) => event.preventDefault()}>
+      {perguntas.map((pergunta, index) => (
+        <Radio
+          active={slide === index}
+          key={pergunta.id}
+          value={respostas[pergunta.id]}
+          onChange={handleChange}
+          {...pergunta}
+        />
+      ))}
+      {resultado ? (
+        <p>{resultado}</p>
+      ) : (
+        <button onClick={handleClick}>Próxima</button>
+      )}
+    </form>
   );
 };
 
-export default Form;
+export default App;
