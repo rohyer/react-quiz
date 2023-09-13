@@ -7,7 +7,7 @@ const Radio = ({ pergunta, options, onChange, value, id, active }) => {
       style={{
         padding: '2rem',
         marginBottom: '1rem',
-        border: '2px solid #EEEEEE',
+        border: '2px solid #eee',
       }}
     >
       <legend style={{ fontWeight: 'bold' }}>{pergunta}</legend>
@@ -22,9 +22,8 @@ const Radio = ({ pergunta, options, onChange, value, id, active }) => {
             checked={value === option}
             value={option}
             onChange={onChange}
-          >
-            {option}
-          </input>
+          />
+          {option}
         </label>
       ))}
     </fieldset>
