@@ -46,10 +46,6 @@ const Form = () => {
     p4: '',
   });
 
-  function handleSubmit(event) {
-    event.preventDefault();
-  }
-
   function handleClick() {
     if (slide < perguntas.length - 1) {
       setSlide(slide + 1);
@@ -65,11 +61,9 @@ const Form = () => {
 
   function finalResult() {
     const correctAnswers = perguntas.filter(
-      ({ id, responses }) => responses[id] === response,
+      ({ id, response }) => responses[id] === response,
     );
-    setResponses(
-      `Você acertou: ${correctAnswers.length} de ${perguntas.length}`,
-    );
+    setResult(`Você acertou: ${correctAnswers.length} de ${perguntas.length}`);
   }
 
   return (
