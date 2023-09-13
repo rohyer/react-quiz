@@ -37,73 +37,59 @@ const perguntas = [
 ];
 
 const Form = () => {
-  const [counter, setCounter] = React.useState(0);
-  const [currentSection, setCurrentSection] = React.useState('p1');
-  const [value, setValue] = React.useState(
-    {
-      p1: '',
-      p2: '',
-      p3: '',
-      p4: ''
-    }
-  );
+  const [slide, setSlide] = React.useState(0);
+  const [result, setResult] = React.useState(null);
+  const [responses, setResponses] = React.useState({
+    p1: '',
+    p2: '',
+    p3: '',
+    p4: '',
+  });
 
   function handleSubmit(event) {
     event.preventDefault();
   }
 
-  function handleClick(id) {
-      setCurrentSection(id);
+  function handleClick() {
+    if (slide < perguntas.length - 1) {
+      setSlide(slide + 1);
+    } else {
+      setSlide(slide + 1);
+      finalResult();
+    }
   }
 
-  function handleChange({target}) {
-    setValue({...value, [target.id]: target.value});
+  function handleChange({ target }) {
+    setResponses({ ...responses, [target.id]: target.value });
   }
 
-  function getResult() {
-    let counter = 0;
-    perguntas.map((pergunta) => {
-      if (pergunta.resposta === value[pergunta.id]) counter++;
-    });
-    return 'Você acertou ' + counter + 'perguntas';
+  function finalResult() {
+    const correctAnswers = perguntas.filter(
+      ({ id, responses }) => responses[id] === response,
+    );
+    setResponses(
+      `Você acertou: ${correctAnswers.length} de ${perguntas.length}`,
+    );
   }
 
   return (
     <div>
-      <form onSubmit={handleSubmit} action="">
-        {perguntas.map(({ pergunta, options, id }, index) => (
-          <div
-            className={`section`}
-            style={
-              id === currentSection ? { display: 'block' } : { display: 'none' }
-            }
-            key={id}
-          >
-            <h3>{pergunta}</h3>
-            <div className="options">
-              <Radio
-                options={options}
-                value={value[id]}
-                id={id}
-                onChange={handleChange}
-              />
-            </div>
-            {currentSection === 'p4'
-            ?
-              <button onClick={() => handleClick('end')}>
-                Finalizar Quiz
-              </button>
-            : 
-            <button onClick={() => handleClick(perguntas[++index].id)}>
-              Enviar
-            </button>}
-            
-          </div>
+      <form onSubmit={(event) => event.preventDefault()} action="">
+        {perguntas.map((pergunta, index) => (
+          <Radio
+            active={slide === index}
+            key={pergunta.id}
+            value={responses[pergunta.id]}
+            onChange={handleChange}
+            {...pergunta}
+          />
         ))}
+        {result ? (
+          <p>{result}</p>
+        ) : (
+          <button onClick={handleClick}>Próxima</button>
+        )}
       </form>
-
-      
-      { currentSection === 'end' && getResult()}
     </div>
   );
 };
